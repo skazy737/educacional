@@ -1,17 +1,18 @@
 package com.educacional.educacional.controller;
 
 import com.educacional.educacional.dto.DisciplinaRequestDTO;
+import com.educacional.educacional.model.Curso;
 import com.educacional.educacional.model.Disciplina;
 import com.educacional.educacional.model.Nota;
+import com.educacional.educacional.model.Professor;
+import com.educacional.educacional.repository.CursoRepository;
 import com.educacional.educacional.repository.DisciplinaRepository;
 import com.educacional.educacional.repository.NotaRepository;
+import com.educacional.educacional.repository.ProfessorRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -21,6 +22,12 @@ public class DisciplinaController {
 
     @Autowired
     private DisciplinaRepository repository;
+
+    @Autowired
+    private CursoRepository cursoRepository;
+
+    @Autowired
+    private ProfessorRepository professorRepository;
 
     @Autowired
     private NotaRepository notaRepository;
@@ -43,9 +50,18 @@ public class DisciplinaController {
 
     @PostMapping
     public ResponseEntity<Disciplina> save(@Valid @RequestBody DisciplinaRequestDTO dto) {
+        Curso curso = cursoRepository.findById(dto.curso_id())
+                .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado com ID: " + dto.curso_id()));
+
+        Professor professor = professorRepository.findById(dto.professor_id())
+                .orElseThrow(() -> new IllegalArgumentException("Professor não encontrado com ID: " + dto.professor_id()));
+
+
         Disciplina disciplina = new Disciplina();
         disciplina.setNome(dto.nome());
         disciplina.setCodigo(dto.codigo());
+        disciplina.setCurso(curso);
+        disciplina.setProfessor(professor);
 
         Disciplina savedDisciplina = this.repository.save(disciplina);
         return ResponseEntity.status(201).body(savedDisciplina);
@@ -56,8 +72,16 @@ public class DisciplinaController {
         Disciplina disciplina = this.repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Disciplina não encontrada com ID: " + id));
 
+        Curso curso = cursoRepository.findById(dto.curso_id())
+                .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado com ID: " + dto.curso_id()));
+
+        Professor professor = professorRepository.findById(dto.professor_id())
+                .orElseThrow(() -> new IllegalArgumentException("Professor não encontrado com ID: " + dto.professor_id()));
+
         disciplina.setNome(dto.nome());
         disciplina.setCodigo(dto.codigo());
+        disciplina.setCurso(curso);
+        disciplina.setProfessor(professor);
 
         Disciplina updatedDisciplina = this.repository.save(disciplina);
         return ResponseEntity.ok(updatedDisciplina);
