@@ -5,5 +5,7 @@ import jakarta.validation.constraints.NotNull;
 public record TurmaRequestDTO(
         @NotNull(message = "O ano é obrigatório") Integer ano,
 
-        @NotNull(message = "O semestre é obrigatório") Integer semestre) {
+        @NotNull(message = "O semestre é obrigatório") Integer semestre,
+
+        @NotNull(message = "O curso é obrigatório") Integer curso_id) {
 }

@@ -4,15 +4,16 @@ import com.educacional.educacional.dto.MatriculaRequestDTO;
 import com.educacional.educacional.dto.NotaRequestDTO;
 import com.educacional.educacional.model.Matricula;
 import com.educacional.educacional.model.Nota;
+import com.educacional.educacional.model.Aluno;
+import com.educacional.educacional.model.Turma;
 import com.educacional.educacional.repository.MatriculaRepository;
+import com.educacional.educacional.repository.AlunoRepository;
+import com.educacional.educacional.repository.TurmaRepository;
 import com.educacional.educacional.repository.NotaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -25,6 +26,12 @@ public class MatriculaController {
 
     @Autowired
     private NotaRepository notaRepository;
+
+    @Autowired
+    private AlunoRepository alunoRepository;
+
+    @Autowired
+    private TurmaRepository turmaRepository;
 
     @GetMapping()
     public ResponseEntity<List<Matricula>> findAll() {
@@ -49,6 +56,22 @@ public class MatriculaController {
 
         this.repository.delete(matricula);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<Matricula> save(@Valid @RequestBody MatriculaRequestDTO dto) {
+        Aluno aluno = this.alunoRepository.findById(dto.aluno_id())
+                .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado com ID: " + dto.aluno_id()));
+
+        Turma turma = this.turmaRepository.findById(dto.turma_id())
+                .orElseThrow(() -> new IllegalArgumentException("Turma não encontrada com ID: " + dto.turma_id()));
+
+        Matricula matricula = new Matricula();
+        matricula.setAluno(aluno);
+        matricula.setTurma(turma);
+
+        Matricula savedMatricula = this.repository.save(matricula);
+        return ResponseEntity.status(201).body(savedMatricula);
     }
 
     @PostMapping("/{id}/add-nota")
