@@ -30,8 +30,6 @@ public class Disciplina {
     @JsonIgnore
     private Professor professor;
 
-    // Removido a lista de 'notas' que foi removida do novo código.
-
     public Integer getId() {
         return id;
     }

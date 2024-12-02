@@ -50,11 +50,10 @@ public class ProfessorController {
         return ResponseEntity.status(201).body(savedProfessor);
     }
 
-    // Endpoint para atualizar um professor existente
     @PutMapping("/{id}")
-    public ResponseEntity<Professor> update(@PathVariable Integer id, @Valid @RequestBody ProfessorRequestDTO dto) { // Validação aplicada ao DTO
+    public ResponseEntity<Professor> update(@PathVariable Integer id, @Valid @RequestBody ProfessorRequestDTO dto) {
         Professor professor = this.repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Professor não encontrado com ID: " + id)); // Mensagem de erro detalhada
+                .orElseThrow(() -> new IllegalArgumentException("Professor não encontrado com ID: " + id));
 
         professor.setNome(dto.nome());
         professor.setEmail(dto.email());
@@ -65,13 +64,12 @@ public class ProfessorController {
         return ResponseEntity.ok(updatedProfessor);
     }
 
-    // Endpoint para deletar um professor
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         Professor professor = this.repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Professor não encontrado com ID: " + id)); // Mensagem de erro detalhada
+                .orElseThrow(() -> new IllegalArgumentException("Professor não encontrado com ID: " + id));
 
         this.repository.delete(professor);
-        return ResponseEntity.noContent().build(); // Retorna noContent após deletar
+        return ResponseEntity.noContent().build();
     }
 }

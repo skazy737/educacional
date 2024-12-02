@@ -21,7 +21,6 @@ public class Matricula {
     @JsonIgnore
     private Turma turma;
 
-    // Removido o mapeamento para a lista de 'notas' que foi removida do novo código.
 
     public Integer getId() {
         return id;
